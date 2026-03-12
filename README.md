@@ -7,6 +7,12 @@
 ![Gemini](https://img.shields.io/badge/Gemini_AI-2.5_Flash-4285F4?logo=google&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-blue)
 
+## วิดีโอสอนวิธีทำ
+
+[![สอนสร้างระบบโพสบล็อกอัตโนมัติด้วย AI](https://img.youtube.com/vi/N4-ZNLiRRTU/maxresdefault.jpg)](https://youtu.be/N4-ZNLiRRTU)
+
+> ดูคลิปสอนแบบละเอียดทุกขั้นตอน ตั้งแต่ติดตั้งจนใช้งานได้จริง: [https://youtu.be/N4-ZNLiRRTU](https://youtu.be/N4-ZNLiRRTU)
+
 ## ความสามารถ
 
 - **สร้างบทความด้วย AI** - สร้างบทความยาว SEO ดี ด้วย Google Gemini 2.5 Flash Lite
