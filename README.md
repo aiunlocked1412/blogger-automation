@@ -1,208 +1,222 @@
 # Blogger Automation
 
-AI-powered blog post automation for Google Blogger. Generate SEO-optimized content with Google Gemini AI, auto-attach images, schedule posts, and bulk publish - all from a sleek dark-mode web UI.
+ระบบโพสบทความลง Google Blogger อัตโนมัติ สร้างเนื้อหาด้วย AI (Google Gemini), ใส่รูปภาพ, ตั้งเวลาโพส, โพสทีละเยอะ ทั้งหมดผ่านหน้าเว็บ Dark Mode สวยๆ
 
 ![Node.js](https://img.shields.io/badge/Node.js-18+-339933?logo=node.js&logoColor=white)
 ![Express](https://img.shields.io/badge/Express-5-000000?logo=express&logoColor=white)
 ![Gemini](https://img.shields.io/badge/Gemini_AI-2.5_Flash-4285F4?logo=google&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-blue)
 
-## Features
+## ความสามารถ
 
-- **AI Content Generation** - Generate long-form, SEO-optimized blog posts using Google Gemini 2.5 Flash Lite
-- **SEO Scoring** - Real-time SEO analysis with actionable checks (title, meta, keywords, headings, word count)
-- **Auto Images** - Fetch relevant images from Unsplash/Pexels and auto-inject into posts
-- **Backlink Insertion** - Automatically insert natural backlinks to your money site within article content
-- **Bulk Posting** - Generate and schedule multiple articles with configurable time intervals
-- **Multi-Blog** - Post unique articles to multiple Blogger blogs simultaneously
-- **Schedule Posts** - Set future publish dates using Blogger API native scheduling
-- **Web UI** - Modern glassmorphism dark theme with animations, fully browser-based
-- **Thai & English** - Full Thai language support for content generation
+- **สร้างบทความด้วย AI** - สร้างบทความยาว SEO ดี ด้วย Google Gemini 2.5 Flash Lite
+- **ตรวจ SEO อัตโนมัติ** - วิเคราะห์คะแนน SEO แบบ real-time (title, meta, keywords, headings, จำนวนคำ)
+- **ใส่รูปภาพอัตโนมัติ** - ดึงรูปจาก Unsplash/Pexels แล้วแทรกในบทความให้เลย
+- **แทรก Backlink** - ใส่ลิงก์ money site ในบทความแบบธรรมชาติ ฝังในคีย์เวิร์ดที่เกี่ยวข้อง
+- **โพสทีละเยอะ (Bulk)** - สร้างหลายบทความ + ตั้งเวลาโพสห่างกันตามที่กำหนด
+- **โพสหลายบล็อก (Multi-Blog)** - สร้างบทความไม่ซ้ำกัน โพสไปหลายบล็อกพร้อมกัน
+- **ตั้งเวลาโพส** - กำหนดวันเวลาที่จะเผยแพร่ในอนาคต
+- **หน้าเว็บสวยๆ** - Dark theme แบบ Glassmorphism พร้อม animation
+- **รองรับภาษาไทย** - สร้างบทความภาษาไทยได้เต็มรูปแบบ
 
-## Prerequisites
+## สิ่งที่ต้องเตรียมก่อนใช้งาน
 
-Before you begin, you'll need:
+1. **Node.js 18 ขึ้นไป** - [ดาวน์โหลด](https://nodejs.org/)
+2. **Google Cloud Project** ที่เปิดใช้ Blogger API v3 แล้ว
+3. **OAuth 2.0 Client ID** (ประเภท Desktop app) จาก [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
+4. **Gemini API Key** จาก [Google AI Studio](https://aistudio.google.com/apikey)
+5. **Unsplash Access Key** (ไม่บังคับ) จาก [Unsplash Developers](https://unsplash.com/developers)
+6. **Pexels API Key** (ไม่บังคับ) จาก [Pexels API](https://www.pexels.com/api/)
 
-1. **Node.js 18+** - [Download](https://nodejs.org/)
-2. **Google Cloud Project** with Blogger API v3 enabled
-3. **OAuth 2.0 Client ID** (Desktop app type) from [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
-4. **Gemini API Key** from [Google AI Studio](https://aistudio.google.com/apikey)
-5. **Unsplash Access Key** (optional) from [Unsplash Developers](https://unsplash.com/developers)
-6. **Pexels API Key** (optional) from [Pexels API](https://www.pexels.com/api/)
-
-## Installation
+## วิธีติดตั้ง
 
 ```bash
-# Clone the repository
+# โคลน repository
 git clone https://github.com/aiunlocked1412/blogger-automation.git
 cd blogger-automation
 
-# Install dependencies
+# ติดตั้ง dependencies
 npm install
 ```
 
-## Quick Start
+## เริ่มต้นใช้งาน
 
-### 1. Start the Web UI
+### ขั้นตอนที่ 1: เปิดหน้าเว็บ
 
 ```bash
 npm run web
 ```
 
-Open [http://localhost:3001](http://localhost:3001) in your browser.
+เปิดเบราว์เซอร์ไปที่ [http://localhost:3001](http://localhost:3001)
 
-### 2. Configure Settings
+### ขั้นตอนที่ 2: ตั้งค่า API Keys
 
-Go to **Settings** page and enter:
+ไปที่หน้า **Settings** แล้วกรอกค่าต่อไปนี้:
 
-| Setting | Where to Get |
-|---------|-------------|
-| Google Client ID | Google Cloud Console > Credentials > OAuth 2.0 Client (Desktop type) |
-| Google Client Secret | Same as above |
-| Gemini API Key | [Google AI Studio](https://aistudio.google.com/apikey) |
-| Unsplash Access Key | [Unsplash Developers](https://unsplash.com/developers) (optional) |
-| Pexels API Key | [Pexels API](https://www.pexels.com/api/) (optional) |
+| ค่าที่ต้องกรอก | หาได้จากไหน |
+|---------------|------------|
+| Google Client ID | Google Cloud Console > Credentials > OAuth 2.0 Client (เลือกประเภท Desktop app) |
+| Google Client Secret | ได้มาพร้อมกับ Client ID ด้านบน |
+| Gemini API Key | [Google AI Studio](https://aistudio.google.com/apikey) กด Get API Key |
+| Unsplash Access Key | [Unsplash Developers](https://unsplash.com/developers) (ไม่บังคับ ใส่เพื่อดึงรูปอัตโนมัติ) |
+| Pexels API Key | [Pexels API](https://www.pexels.com/api/) (ไม่บังคับ ใช้แทน Unsplash ได้) |
 
-Click **Save All Settings**.
+กรอกเสร็จกด **Save All Settings**
 
-### 3. Connect Google Account
+### ขั้นตอนที่ 3: เชื่อมต่อ Google Account
 
-Click **Connect Google** button. A popup will open for Google OAuth consent. After authorizing, your Blogger blogs will auto-load in the dropdown.
+กดปุ่ม **Connect Google** จะมี popup ขึ้นมาให้ login Google แล้วอนุญาตเข้าถึง Blogger เชื่อมต่อเสร็จ ระบบจะดึงรายชื่อบล็อกของคุณมาแสดงในดรอปดาวน์อัตโนมัติ
 
-### 4. Generate & Publish
+### ขั้นตอนที่ 4: สร้างบทความ & โพส
 
-1. Go to **AI Generate** page
-2. Select your blog from the dropdown
-3. Enter a topic/keyword
-4. (Optional) Enter a Money Site URL for backlink insertion
-5. Click **Generate Content**
-6. Review the generated article and SEO score
-7. Click **Publish Now**, **Save as Draft**, or **Schedule**
+1. ไปที่หน้า **AI Generate**
+2. เลือกบล็อกจากดรอปดาวน์
+3. พิมพ์หัวข้อ/คีย์เวิร์ดที่ต้องการ
+4. (ไม่บังคับ) ใส่ URL ของ Money Site เพื่อแทรก backlink
+5. กด **Generate Content**
+6. ตรวจสอบบทความที่ AI สร้าง + ดูคะแนน SEO
+7. กด **Publish Now** (โพสเลย), **Save as Draft** (บันทึกแบบร่าง) หรือ **Schedule** (ตั้งเวลาโพส)
 
-## Usage
+## วิธีใช้งาน
 
-### Web UI (Recommended)
+### ผ่านหน้าเว็บ (แนะนำ)
 
 ```bash
 npm run web
-# Opens at http://localhost:3001
+# เปิดที่ http://localhost:3001
 ```
 
-### CLI
+### ผ่าน Command Line (CLI)
 
 ```bash
-# Authenticate
+# ยืนยันตัวตน
 node src/index.js auth
 
-# Generate content
-node src/index.js generate "Your Topic Here"
+# สร้างบทความ
+node src/index.js generate "หัวข้อที่ต้องการ"
 
-# Post to Blogger
-node src/index.js post "Your Topic Here"
+# โพสลง Blogger
+node src/index.js post "หัวข้อที่ต้องการ"
 
-# List recent posts
+# ดูรายการโพสล่าสุด
 node src/index.js list
 
-# List drafts
+# ดูรายการแบบร่าง
 node src/index.js drafts
 ```
 
-## Web UI Pages
+## หน้าเว็บแต่ละหน้า
 
-### AI Generate
-Generate a single article with customizable settings:
-- **Topic/Keyword** - The main subject for your article
-- **Money Site URL** - Auto-insert 2-3 natural backlinks in the content
-- **Language** - Thai (default) or English
-- **Word Count** - Target word count (default: 600)
+### AI Generate - สร้างบทความด้วย AI
+ตั้งค่าการสร้างบทความได้:
+- **Topic / Keyword** - หัวข้อหรือคีย์เวิร์ดของบทความ
+- **Money Site URL** - ระบบจะแทรก backlink 2-3 จุดในเนื้อหาแบบธรรมชาติ
+- **Language** - ภาษาไทย (ค่าเริ่มต้น) หรือภาษาอังกฤษ
+- **Word Count** - จำนวนคำโดยประมาณ (ค่าเริ่มต้น: 600)
 
-### Bulk Post
-Two modes for mass publishing:
+### Bulk Post - โพสทีละเยอะ
+มี 2 โหมด:
 
-**Schedule Bulk** - Generate N articles from one topic, each with unique content (different angles: beginner guide, advanced tips, case study, FAQ, etc.), scheduled at configurable intervals.
+**Schedule Bulk** - สร้างบทความหลายชิ้นจากหัวข้อเดียว เนื้อหาไม่ซ้ำกัน (มุมมองต่างกัน: คู่มือเบื้องต้น, เทคนิคขั้นสูง, กรณีศึกษา, FAQ ฯลฯ) ตั้งเวลาโพสห่างกันตามที่กำหนด
 
-**Multi-Blog** - Generate unique articles and post to multiple Blogger blogs simultaneously (1 unique article per blog).
+**Multi-Blog** - สร้างบทความไม่ซ้ำกัน แล้วโพสไปหลายบล็อกพร้อมกัน (1 บทความ / 1 บล็อก)
 
-### Post / Schedule
-Manual post editor with Markdown support. Write or paste content, set labels, and publish immediately or schedule for a future date.
+### Post / Schedule - เขียนเอง / ตั้งเวลา
+เขียนบทความเอง หรือวางเนื้อหาที่เตรียมไว้ (รองรับ Markdown) แล้วโพสทันทีหรือตั้งเวลาโพสในอนาคต
 
-### My Posts / Drafts
-View, manage, and delete your published posts and drafts.
+### My Posts / Drafts - จัดการโพส
+ดูรายการบทความที่เผยแพร่แล้ว และแบบร่าง สามารถลบได้
 
-## Project Structure
+## วิธีตั้งค่า Google Cloud (ละเอียด)
+
+### 1. สร้าง Google Cloud Project
+1. ไปที่ [Google Cloud Console](https://console.cloud.google.com/)
+2. กด **Select a project** > **New Project**
+3. ตั้งชื่อโปรเจกต์แล้วกด **Create**
+
+### 2. เปิดใช้ Blogger API
+1. ไปที่ **APIs & Services** > **Library**
+2. ค้นหา **"Blogger API v3"**
+3. กด **Enable**
+
+### 3. สร้าง OAuth 2.0 Credentials
+1. ไปที่ **APIs & Services** > **Credentials**
+2. กด **Create Credentials** > **OAuth client ID**
+3. ถ้ายังไม่เคยตั้ง Consent Screen จะมีให้ตั้งก่อน:
+   - เลือก **External**
+   - กรอกชื่อแอป (อะไรก็ได้)
+   - ใส่ email ของตัวเอง
+   - กด Save
+4. กลับมาสร้าง OAuth client ID:
+   - Application type: **Desktop app**
+   - ตั้งชื่อ (อะไรก็ได้)
+   - กด **Create**
+5. คัดลอก **Client ID** และ **Client Secret** ไปใส่ในหน้า Settings ของเว็บ
+
+### 4. สร้าง Gemini API Key
+1. ไปที่ [Google AI Studio](https://aistudio.google.com/apikey)
+2. กด **Get API Key** หรือ **Create API Key**
+3. คัดลอก API Key ไปใส่ในหน้า Settings
+
+## โครงสร้างโปรเจกต์
 
 ```
 blogger-automation/
 ├── config/
-│   └── default.js          # Central config with live settings reload
+│   └── default.js          # ไฟล์ config กลาง (โหลด settings แบบ live)
 ├── src/
-│   ├── index.js             # CLI entry point (commander)
+│   ├── index.js             # CLI entry point
 │   ├── auth/
-│   │   └── google-auth.js   # OAuth2 flow + token storage
+│   │   └── google-auth.js   # OAuth2 login + เก็บ token
 │   ├── blogger/
-│   │   └── blogger-api.js   # Blogger API v3 wrapper with retry
+│   │   └── blogger-api.js   # เชื่อมต่อ Blogger API v3 (มี retry)
 │   ├── content/
-│   │   ├── ai-generator.js  # Gemini AI content generation
-│   │   ├── file-loader.js   # Markdown/JSON file loader
+│   │   ├── ai-generator.js  # สร้างบทความด้วย Gemini AI
+│   │   ├── file-loader.js   # โหลดไฟล์ Markdown/JSON
 │   │   └── templates.js     # HTML templates
 │   ├── images/
-│   │   └── image-service.js # Unsplash/Pexels image fetching
+│   │   └── image-service.js # ดึงรูปจาก Unsplash/Pexels
 │   ├── scheduler/
-│   │   └── scheduler.js     # Schedule date parsing
+│   │   └── scheduler.js     # จัดการวันเวลาตั้งเวลาโพส
 │   ├── seo/
-│   │   └── seo-optimizer.js # SEO scoring & optimization
+│   │   └── seo-optimizer.js # ตรวจและปรับ SEO
 │   ├── utils/
-│   │   ├── html-builder.js  # Markdown to HTML + image injection
-│   │   └── logger.js        # Winston logger
+│   │   ├── html-builder.js  # แปลง Markdown เป็น HTML + แทรกรูป
+│   │   └── logger.js        # ระบบ log (Winston)
 │   └── web/
 │       ├── server.js         # Express API server
 │       └── public/
-│           └── index.html    # Single-page web UI
+│           └── index.html    # หน้าเว็บ UI (Single Page)
 ├── content/
-│   ├── posts/               # Pre-written Markdown posts
-│   └── topics.json          # Topic queue for batch processing
-├── data/                    # Runtime data (gitignored)
-│   ├── settings.json        # User settings
+│   ├── posts/               # ไฟล์บทความที่เตรียมไว้
+│   └── topics.json          # คิวหัวข้อสำหรับ batch
+├── data/                    # ข้อมูล runtime (ไม่ขึ้น git)
+│   ├── settings.json        # ค่าตั้งค่าผู้ใช้
 │   └── tokens.json          # OAuth tokens
 └── templates/
-    └── blog-post.html       # HTML post template
+    └── blog-post.html       # HTML template สำหรับโพส
 ```
 
 ## API Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/settings` | Get current settings (secrets masked) |
-| POST | `/api/settings` | Save settings |
-| GET | `/api/auth/status` | Check authentication status |
-| GET | `/api/auth/connect` | Start OAuth flow |
-| POST | `/api/auth/disconnect` | Disconnect Google account |
-| GET | `/api/blogs` | List user's Blogger blogs |
-| POST | `/api/blogs/select` | Select active blog |
-| POST | `/api/generate` | Generate AI content |
-| POST | `/api/post` | Create/publish a post |
-| POST | `/api/schedule` | Schedule a post |
-| GET | `/api/posts` | List published posts |
-| GET | `/api/drafts` | List draft posts |
-| DELETE | `/api/posts/:id` | Delete a post |
-| POST | `/api/seo/check` | Check SEO score |
+| Method | Endpoint | คำอธิบาย |
+|--------|----------|---------|
+| GET | `/api/settings` | ดูค่าตั้งค่า (secrets จะถูกซ่อน) |
+| POST | `/api/settings` | บันทึกค่าตั้งค่า |
+| GET | `/api/auth/status` | เช็คสถานะการเชื่อมต่อ |
+| GET | `/api/auth/connect` | เริ่ม OAuth login |
+| POST | `/api/auth/disconnect` | ยกเลิกการเชื่อมต่อ |
+| GET | `/api/blogs` | ดูรายชื่อบล็อก |
+| POST | `/api/blogs/select` | เลือกบล็อกที่ใช้งาน |
+| POST | `/api/generate` | สร้างบทความด้วย AI |
+| POST | `/api/post` | สร้าง/เผยแพร่บทความ |
+| POST | `/api/schedule` | ตั้งเวลาโพสบทความ |
+| GET | `/api/posts` | ดูรายการบทความที่เผยแพร่ |
+| GET | `/api/drafts` | ดูรายการแบบร่าง |
+| DELETE | `/api/posts/:id` | ลบบทความ |
+| POST | `/api/seo/check` | ตรวจคะแนน SEO |
 
-## Google Cloud Setup Guide
-
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project (or select existing)
-3. Enable **Blogger API v3**:
-   - Go to APIs & Services > Library
-   - Search "Blogger API v3"
-   - Click Enable
-4. Create OAuth 2.0 credentials:
-   - Go to APIs & Services > Credentials
-   - Click "Create Credentials" > "OAuth client ID"
-   - Application type: **Desktop app**
-   - Copy the **Client ID** and **Client Secret**
-5. Configure OAuth consent screen if prompted
-
-## Tech Stack
+## เทคโนโลยีที่ใช้
 
 - **Runtime:** Node.js (ES Modules)
 - **Web Framework:** Express 5
@@ -216,6 +230,6 @@ blogger-automation/
 
 MIT
 
-## Author
+## ผู้พัฒนา
 
-Made with AI by [AI Unlocked](https://github.com/aiunlocked1412)
+สร้างด้วย AI โดย [AI Unlocked](https://github.com/aiunlocked1412)
