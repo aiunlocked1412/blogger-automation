@@ -1,0 +1,13 @@
+<!-- Blog Post Template -->
+<article class="blog-post">
+  <div class="post-content">
+    {{content}}
+  </div>
+</article>
+
+{{#if metaDescription}}
+<meta name="description" content="{{metaDescription}}" />
+{{/if}}
+{{#if keywords}}
+<meta name="keywords" content="{{keywords}}" />
+{{/if}}

@@ -1,0 +1,19 @@
+{
+  "topics": [
+    {
+      "keyword": "Node.js Performance Tips",
+      "language": "en",
+      "labels": ["nodejs", "performance", "javascript"]
+    },
+    {
+      "keyword": "React Hooks Best Practices",
+      "language": "en",
+      "labels": ["react", "hooks", "frontend"]
+    },
+    {
+      "keyword": "Docker for Beginners",
+      "language": "en",
+      "labels": ["docker", "devops", "tutorial"]
+    }
+  ]
+}

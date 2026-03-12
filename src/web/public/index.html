@@ -1,0 +1,2060 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a0b14">
+  <meta name="color-scheme" content="dark">
+  <title>Blogger Automation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0a0b14;
+      --bg2: #0e1019;
+      --surface: #13152080;
+      --surface-solid: #131520;
+      --surface2: #1a1d2d;
+      --surface3: #222538;
+      --border: #ffffff10;
+      --border2: #ffffff18;
+      --text: #eef0f6;
+      --text2: #8b90a8;
+      --text3: #5c6080;
+      --primary: #7c5cff;
+      --primary-light: #a78bfa;
+      --primary-dark: #5b3fd4;
+      --primary-glow: rgba(124,92,255,0.25);
+      --accent: #06d6a0;
+      --accent-glow: rgba(6,214,160,0.2);
+      --pink: #f472b6;
+      --pink-glow: rgba(244,114,182,0.2);
+      --orange: #fb923c;
+      --orange-glow: rgba(251,146,60,0.2);
+      --danger: #ef4444;
+      --danger-glow: rgba(239,68,68,0.2);
+      --warning: #fbbf24;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --glass: saturate(180%) blur(20px);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Background effects */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 600px 400px at 20% 20%, rgba(124,92,255,0.08), transparent),
+        radial-gradient(ellipse 500px 300px at 80% 80%, rgba(6,214,160,0.06), transparent),
+        radial-gradient(ellipse 400px 300px at 60% 30%, rgba(244,114,182,0.04), transparent);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ─── Sidebar ─── */
+    .sidebar {
+      background: linear-gradient(180deg, #12142080, #0a0b1480);
+      backdrop-filter: var(--glass);
+      -webkit-backdrop-filter: var(--glass);
+      border-right: 1px solid var(--border);
+      padding: 28px 0;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sidebar::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 1px;
+      height: 100%;
+      background: linear-gradient(180deg, transparent, var(--primary-glow), var(--accent-glow), transparent);
+      opacity: 0.5;
+    }
+
+    .logo {
+      padding: 0 24px 28px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+
+    .logo h1 {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #7c5cff 0%, #a78bfa 30%, #f472b6 70%, #06d6a0 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 4s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+      0%, 100% { background-position: 0% center; }
+      50% { background-position: 200% center; }
+    }
+
+    .logo span {
+      font-size: 12px;
+      color: var(--text3);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    .nav-item {
+      padding: 12px 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text2);
+      transition: color 0.2s, background 0.2s, transform 0.15s;
+      font-size: 14px;
+      font-weight: 500;
+      border-left: 3px solid transparent;
+      position: relative;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    .nav-item:hover {
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      transform: translateX(2px);
+    }
+
+    .nav-item.active {
+      color: var(--primary-light);
+      background: linear-gradient(90deg, rgba(124,92,255,0.08), transparent);
+      border-left-color: var(--primary);
+    }
+
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 24px;
+      background: var(--primary);
+      border-radius: 0 3px 3px 0;
+      box-shadow: 0 0 12px var(--primary-glow);
+    }
+
+    .nav-icon {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .nav-icon svg { width: 18px; height: 18px; }
+
+    .nav-divider { border-top: 1px solid var(--border); margin: 10px 24px; }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    .auth-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      transition: background 0.2s, border-color 0.2s;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .auth-badge:hover { background: var(--surface3); border-color: var(--border2); }
+
+    .auth-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--danger);
+      flex-shrink: 0;
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+
+    .auth-dot.ok {
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent-glow), 0 0 16px var(--accent-glow);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { box-shadow: 0 0 8px var(--accent-glow); }
+      50% { box-shadow: 0 0 16px var(--accent-glow), 0 0 24px var(--accent-glow); }
+    }
+
+    /* ─── Main ─── */
+    .main {
+      padding: 36px 44px;
+      overflow-y: auto;
+      height: 100vh;
+      scroll-behavior: smooth;
+    }
+
+    .page { display: none; animation: fadeUp 0.35s ease; }
+    .page.active { display: block; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .page-header { margin-bottom: 32px; }
+
+    .page-title {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .page-title-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .page-title-icon svg { width: 22px; height: 22px; }
+
+    .page-title-icon.purple { background: linear-gradient(135deg, rgba(124,92,255,0.2), rgba(124,92,255,0.05)); color: var(--primary-light); }
+    .page-title-icon.green { background: linear-gradient(135deg, rgba(6,214,160,0.2), rgba(6,214,160,0.05)); color: var(--accent); }
+    .page-title-icon.pink { background: linear-gradient(135deg, rgba(244,114,182,0.2), rgba(244,114,182,0.05)); color: var(--pink); }
+    .page-title-icon.orange { background: linear-gradient(135deg, rgba(251,146,60,0.2), rgba(251,146,60,0.05)); color: var(--orange); }
+
+    .page-desc { color: var(--text2); font-size: 14px; line-height: 1.6; }
+
+    /* ─── Cards ─── */
+    .card {
+      background: var(--surface);
+      backdrop-filter: var(--glass);
+      -webkit-backdrop-filter: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 20px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      animation: cardIn 0.4s ease;
+    }
+
+    .card:hover {
+      border-color: var(--border2);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      letter-spacing: -0.2px;
+    }
+
+    .card-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .card-icon svg { width: 16px; height: 16px; }
+    .card-icon.purple { background: linear-gradient(135deg, rgba(124,92,255,0.2), rgba(124,92,255,0.08)); color: var(--primary-light); }
+    .card-icon.green { background: linear-gradient(135deg, rgba(6,214,160,0.2), rgba(6,214,160,0.08)); color: var(--accent); }
+    .card-icon.pink { background: linear-gradient(135deg, rgba(244,114,182,0.2), rgba(244,114,182,0.08)); color: var(--pink); }
+    .card-icon.orange { background: linear-gradient(135deg, rgba(251,146,60,0.2), rgba(251,146,60,0.08)); color: var(--orange); }
+    .card-icon.blue { background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(59,130,246,0.08)); color: #60a5fa; }
+
+    .card-subtitle { font-size: 13px; color: var(--text2); margin-bottom: 20px; line-height: 1.6; }
+
+    /* ─── Forms ─── */
+    .form-group { margin-bottom: 20px; }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text2);
+      margin-bottom: 8px;
+      letter-spacing: 0.2px;
+    }
+
+    .form-hint {
+      font-size: 12px;
+      color: var(--text3);
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+      background: var(--surface3);
+    }
+
+    input:focus-visible, textarea:focus-visible, select:focus-visible {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+
+    input::placeholder, textarea::placeholder { color: var(--text3); }
+    textarea { resize: vertical; min-height: 120px; }
+    select { cursor: pointer; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    .input-with-status { position: relative; }
+    .input-with-status input { padding-right: 40px; }
+    .input-status {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      color: var(--accent);
+    }
+
+    /* ─── Buttons ─── */
+    .btn {
+      padding: 11px 22px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s, background 0.2s;
+      font-family: inherit;
+      position: relative;
+      overflow: hidden;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    .btn:active { transform: scale(0.97); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      box-shadow: 0 2px 12px var(--primary-glow);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 4px 20px var(--primary-glow);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:focus-visible {
+      outline: 2px solid var(--primary-light);
+      outline-offset: 2px;
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, var(--accent), #059669);
+      color: white;
+      box-shadow: 0 2px 12px var(--accent-glow);
+    }
+
+    .btn-success:hover {
+      box-shadow: 0 4px 20px var(--accent-glow);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border2);
+      color: var(--text);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--primary);
+      color: var(--primary-light);
+      background: rgba(124,92,255,0.05);
+    }
+
+    .btn-danger {
+      background: transparent;
+      border: 1px solid rgba(239,68,68,0.3);
+      color: var(--danger);
+    }
+
+    .btn-danger:hover {
+      background: var(--danger);
+      color: white;
+      box-shadow: 0 4px 16px var(--danger-glow);
+    }
+
+    .btn-google {
+      background: linear-gradient(135deg, #4285f4, #3367d6);
+      color: white;
+      font-size: 15px;
+      padding: 13px 28px;
+      box-shadow: 0 2px 12px rgba(66,133,244,0.25);
+    }
+
+    .btn-google:hover {
+      box-shadow: 0 4px 20px rgba(66,133,244,0.35);
+      transform: translateY(-1px);
+    }
+
+    .btn-sm { padding: 7px 16px; font-size: 13px; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
+    .btn-group { display: flex; gap: 10px; margin-top: 24px; flex-wrap: wrap; }
+
+    .btn svg { width: 16px; height: 16px; }
+
+    /* Ripple effect */
+    .btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(255,255,255,0.15), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .btn:hover::after { opacity: 1; }
+
+    /* ─── Connection Card ─── */
+    .connect-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      background: linear-gradient(135deg, var(--surface2), var(--surface3));
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      margin-bottom: 20px;
+      transition: border-color 0.2s;
+    }
+
+    .connect-card:hover { border-color: var(--border2); }
+
+    .status-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+
+    .status-dot.on {
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent-glow), 0 0 20px var(--accent-glow);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    .status-dot.off { background: var(--danger); box-shadow: 0 0 6px var(--danger-glow); }
+
+    /* ─── SEO ─── */
+    .seo-bar { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+
+    .seo-score-circle {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 800;
+      flex-shrink: 0;
+      transition: transform 0.3s;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .seo-score-circle:hover { transform: scale(1.05); }
+
+    .seo-score-circle.good {
+      background: linear-gradient(135deg, rgba(6,214,160,0.15), rgba(6,214,160,0.05));
+      color: var(--accent);
+      border: 2px solid rgba(6,214,160,0.4);
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+
+    .seo-score-circle.ok {
+      background: linear-gradient(135deg, rgba(251,191,36,0.15), rgba(251,191,36,0.05));
+      color: var(--warning);
+      border: 2px solid rgba(251,191,36,0.4);
+      box-shadow: 0 0 20px var(--orange-glow);
+    }
+
+    .seo-score-circle.bad {
+      background: linear-gradient(135deg, rgba(239,68,68,0.15), rgba(239,68,68,0.05));
+      color: var(--danger);
+      border: 2px solid rgba(239,68,68,0.4);
+      box-shadow: 0 0 20px var(--danger-glow);
+    }
+
+    .seo-checks { list-style: none; }
+
+    .seo-checks li {
+      padding: 8px 0;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text2);
+    }
+
+    .check-pass { color: var(--accent); }
+    .check-fail { color: var(--danger); }
+
+    /* ─── Posts ─── */
+    .post-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.2s;
+    }
+
+    .post-item:last-child { border-bottom: none; }
+
+    .post-info h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      letter-spacing: -0.2px;
+    }
+
+    .post-meta {
+      font-size: 12px;
+      color: var(--text3);
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .post-meta a {
+      color: var(--primary-light);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .post-meta a:hover { color: var(--primary); }
+
+    .post-labels { display: flex; gap: 6px; margin-top: 8px; }
+
+    .label-tag {
+      background: linear-gradient(135deg, rgba(124,92,255,0.12), rgba(124,92,255,0.05));
+      color: var(--primary-light);
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      border: 1px solid rgba(124,92,255,0.15);
+    }
+
+    /* ─── Toast ─── */
+    .toast-container {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toast {
+      padding: 14px 22px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 500;
+      animation: toastIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      max-width: 420px;
+      backdrop-filter: var(--glass);
+      -webkit-backdrop-filter: var(--glass);
+      border: 1px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .toast.success {
+      background: linear-gradient(135deg, rgba(6,214,160,0.9), rgba(5,150,105,0.9));
+      border-color: rgba(6,214,160,0.3);
+      color: white;
+      box-shadow: 0 8px 32px rgba(6,214,160,0.2);
+    }
+
+    .toast.error {
+      background: linear-gradient(135deg, rgba(239,68,68,0.9), rgba(220,38,38,0.9));
+      border-color: rgba(239,68,68,0.3);
+      color: white;
+      box-shadow: 0 8px 32px rgba(239,68,68,0.2);
+    }
+
+    .toast.info {
+      background: linear-gradient(135deg, rgba(124,92,255,0.9), rgba(91,63,212,0.9));
+      border-color: rgba(124,92,255,0.3);
+      color: white;
+      box-shadow: 0 8px 32px rgba(124,92,255,0.2);
+    }
+
+    @keyframes toastIn {
+      from { transform: translateX(100%) scale(0.95); opacity: 0; }
+      to { transform: translateX(0) scale(1); opacity: 1; }
+    }
+
+    /* ─── Loading ─── */
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10,11,20,0.8);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    .loading-overlay.show { display: flex; }
+
+    .loading-box {
+      background: var(--surface-solid);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius);
+      padding: 40px 48px;
+      text-align: center;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+      animation: loadingPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes loadingPop {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .loading-box .spinner {
+      width: 40px;
+      height: 40px;
+      border-width: 3px;
+      border-color: var(--surface3);
+      border-top-color: var(--primary);
+      margin: 0 auto 20px;
+    }
+
+    .loading-box div:last-child {
+      font-weight: 500;
+      color: var(--text2);
+    }
+
+    /* ─── Preview ─── */
+    .preview-box {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 24px;
+      margin-top: 16px;
+      max-height: 400px;
+      overflow-y: auto;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .preview-box h2 { font-size: 18px; font-weight: 700; margin: 20px 0 10px; color: var(--text); }
+    .preview-box h3 { font-size: 16px; font-weight: 600; margin: 16px 0 8px; color: var(--text); }
+    .preview-box p { margin-bottom: 12px; color: var(--text2); }
+    .preview-box ul, .preview-box ol { padding-left: 24px; margin-bottom: 12px; }
+    .preview-box li { color: var(--text2); margin-bottom: 4px; }
+
+    .preview-box code {
+      background: rgba(124,92,255,0.12);
+      color: var(--primary-light);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+
+    .preview-box pre {
+      background: var(--bg);
+      padding: 16px;
+      border-radius: var(--radius-sm);
+      overflow-x: auto;
+      margin-bottom: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .preview-box pre code { background: none; padding: 0; }
+
+    .blog-select {
+      padding: 12px 16px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    /* ─── Tabs ─── */
+    .tab-bar {
+      display: flex;
+      gap: 0;
+      margin-bottom: 28px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tab-item {
+      padding: 12px 28px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text3);
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: color 0.2s, border-color 0.2s;
+      user-select: none;
+    }
+
+    .tab-item:hover { color: var(--text2); }
+
+    .tab-item.active {
+      color: var(--primary-light);
+      border-bottom-color: var(--primary);
+    }
+
+    .tab-content { display: none; animation: fadeUp 0.3s ease; }
+    .tab-content.active { display: block; }
+
+    /* ─── Bulk ─── */
+    .blog-checkbox-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 260px;
+      overflow-y: auto;
+    }
+
+    .blog-check-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s, transform 0.15s;
+      user-select: none;
+    }
+
+    .blog-check-item:hover {
+      border-color: var(--border2);
+      transform: translateX(2px);
+    }
+
+    .blog-check-item.checked {
+      border-color: var(--primary);
+      background: linear-gradient(135deg, rgba(124,92,255,0.08), rgba(124,92,255,0.02));
+    }
+
+    .blog-check-item input[type=checkbox] {
+      width: auto;
+      accent-color: var(--primary);
+    }
+
+    .blog-check-name { font-weight: 600; font-size: 14px; }
+    .blog-check-url { font-size: 12px; color: var(--text3); }
+
+    .bulk-log {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      max-height: 400px;
+      overflow-y: auto;
+      font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 2;
+    }
+
+    .log-ok { color: var(--accent); }
+    .log-err { color: var(--danger); }
+    .log-info { color: var(--primary-light); }
+    .log-wait { color: var(--warning); }
+
+    .empty-state {
+      text-align: center;
+      padding: 64px 20px;
+      color: var(--text3);
+    }
+
+    .empty-state svg { width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.3; }
+    .empty-state p { font-size: 14px; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 768px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        flex-direction: row;
+        padding: 0;
+        border-right: none;
+        border-top: 1px solid var(--border);
+        z-index: 100;
+        overflow-x: auto;
+        background: var(--bg2);
+      }
+      .sidebar::after { display: none; }
+      .logo, .sidebar-footer, .nav-divider { display: none; }
+      .nav-item {
+        flex-direction: column;
+        padding: 10px 14px;
+        font-size: 11px;
+        gap: 4px;
+        border-left: none;
+        border-top: 3px solid transparent;
+        white-space: nowrap;
+      }
+      .nav-item.active {
+        border-left-color: transparent;
+        border-top-color: var(--primary);
+      }
+      .nav-item.active::before { display: none; }
+      .main { padding: 20px; padding-bottom: 80px; height: calc(100vh - 60px); }
+      .form-row { grid-template-columns: 1fr; }
+      .connect-card { flex-direction: column; gap: 14px; text-align: center; }
+      body { overflow: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <nav class="sidebar" role="navigation" aria-label="Main navigation">
+      <div class="logo">
+        <h1>Blogger Auto</h1>
+        <span>AI-Powered Publishing</span>
+      </div>
+
+      <div class="nav-item" data-page="settings" onclick="navigate('settings')" role="button" tabindex="0" aria-label="Settings">
+        <div class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        </div>
+        Settings
+      </div>
+
+      <div class="nav-divider"></div>
+
+      <div class="nav-item active" data-page="generate" onclick="navigate('generate')" role="button" tabindex="0" aria-label="AI Generate">
+        <div class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+        </div>
+        AI Generate
+      </div>
+
+      <div class="nav-item" data-page="bulk" onclick="navigate('bulk')" role="button" tabindex="0" aria-label="Bulk Post">
+        <div class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+        </div>
+        Bulk Post
+      </div>
+
+      <div class="nav-item" data-page="post" onclick="navigate('post')" role="button" tabindex="0" aria-label="Post / Schedule">
+        <div class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+        </div>
+        Post / Schedule
+      </div>
+
+      <div class="nav-item" data-page="posts" onclick="navigate('posts')" role="button" tabindex="0" aria-label="My Posts">
+        <div class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+        </div>
+        My Posts
+      </div>
+
+      <div class="nav-item" data-page="drafts" onclick="navigate('drafts')" role="button" tabindex="0" aria-label="Drafts">
+        <div class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+        </div>
+        Drafts
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="auth-badge" id="authBadge" onclick="navigate('settings')" role="button" tabindex="0" aria-label="Authentication status">
+          <div class="auth-dot" id="authDot"></div>
+          <span id="authText">Checking...</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+
+      <!-- ═══════════════════ Settings Page ═══════════════════ -->
+      <div class="page" id="page-settings">
+        <div class="page-header">
+          <h2 class="page-title">
+            <div class="page-title-icon purple">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+            </div>
+            Settings
+          </h2>
+          <p class="page-desc">API Keys and Google Account connection</p>
+        </div>
+
+        <!-- Google Connection -->
+        <div class="card">
+          <div class="card-title">
+            <div class="card-icon blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+            </div>
+            Google Blogger Connection
+          </div>
+
+          <div class="connect-card" id="connectCard">
+            <div class="status-label">
+              <div class="status-dot off" id="connectDot"></div>
+              <span id="connectText">Not Connected</span>
+            </div>
+            <button class="btn btn-google" id="connectBtn" onclick="handleConnect()" aria-label="Connect Google Account">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+              Connect Google
+            </button>
+          </div>
+
+          <div class="form-group">
+            <label for="setClientId">Google Client ID</label>
+            <input type="text" id="setClientId" name="clientId" placeholder="xxxxx.apps.googleusercontent.com" autocomplete="off">
+            <div class="form-hint">Google Cloud Console > Credentials > OAuth 2.0 Client (Desktop type)</div>
+          </div>
+          <div class="form-group">
+            <label for="setClientSecret">Google Client Secret</label>
+            <div class="input-with-status">
+              <input type="password" id="setClientSecret" name="clientSecret" placeholder="GOCSPX-xxxxxxx" autocomplete="off">
+              <span class="input-status" id="secretStatus"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gemini API -->
+        <div class="card">
+          <div class="card-title">
+            <div class="card-icon orange">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+            </div>
+            Gemini AI (Content Generation)
+          </div>
+          <div class="form-group">
+            <label for="setGeminiKey">Gemini API Key</label>
+            <div class="input-with-status">
+              <input type="password" id="setGeminiKey" name="geminiKey" placeholder="AIzaSy..." autocomplete="off">
+              <span class="input-status" id="geminiStatus"></span>
+            </div>
+            <div class="form-hint">Google AI Studio > Get API Key (aistudio.google.com)</div>
+          </div>
+        </div>
+
+        <!-- Image APIs -->
+        <div class="card">
+          <div class="card-title">
+            <div class="card-icon pink">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
+            Image APIs (Optional)
+          </div>
+          <div class="card-subtitle">Use at least 1 to auto-attach images to articles</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="setUnsplash">Unsplash Access Key</label>
+              <input type="password" id="setUnsplash" name="unsplash" placeholder="Unsplash access key" autocomplete="off">
+            </div>
+            <div class="form-group">
+              <label for="setPexels">Pexels API Key</label>
+              <input type="password" id="setPexels" name="pexels" placeholder="Pexels API key" autocomplete="off">
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="handleSaveSettings()" aria-label="Save All Settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Save All Settings
+          </button>
+          <button class="btn btn-outline" onclick="loadSettingsUI()" aria-label="Reset settings form">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+            Reset
+          </button>
+        </div>
+      </div>
+
+      <!-- ═══════════════════ Generate Page ═══════════════════ -->
+      <div class="page active" id="page-generate">
+        <div class="page-header">
+          <h2 class="page-title">
+            <div class="page-title-icon green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+            </div>
+            AI Content Generator
+          </h2>
+          <p class="page-desc">Generate SEO-optimized blog posts with Gemini AI</p>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <div class="card-icon green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+            </div>
+            Generate Settings
+          </div>
+          <div class="form-group">
+            <label for="genBlogSelect">Blog</label>
+            <select id="genBlogSelect" class="blog-select" aria-label="Select blog"></select>
+          </div>
+          <div class="form-group">
+            <label for="genTopic">Topic / Keyword</label>
+            <input type="text" id="genTopic" name="topic" placeholder="e.g. AI, React Hooks Guide..." autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label for="genMoneyUrl">Money Site URL</label>
+            <input type="url" id="genMoneyUrl" name="moneyUrl" placeholder="https://yoursite.com" autocomplete="off">
+            <div class="form-hint">Natural backlinks will be inserted into the article content</div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="genLang">Language</label>
+              <select id="genLang" aria-label="Select language">
+                <option value="th">Thai</option>
+                <option value="en">English</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="genWords">Word Count (approx)</label>
+              <input type="number" id="genWords" name="wordCount" value="600" min="300" max="5000">
+            </div>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-primary" onclick="handleGenerate()" aria-label="Generate Content">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              Generate Content
+            </button>
+          </div>
+        </div>
+
+        <div id="genResult" style="display:none;">
+          <div class="card">
+            <div class="card-title">
+              <div class="card-icon purple">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </div>
+              Generated Content
+            </div>
+            <div class="form-group">
+              <label for="genResTitle">Title</label>
+              <input type="text" id="genResTitle" readonly>
+            </div>
+            <div class="form-group">
+              <label for="genResDesc">Meta Description</label>
+              <input type="text" id="genResDesc" readonly>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="genResKeywords">Keywords</label>
+                <input type="text" id="genResKeywords" readonly>
+              </div>
+              <div class="form-group">
+                <label for="genResLabels">Labels</label>
+                <input type="text" id="genResLabels" readonly>
+              </div>
+            </div>
+            <div id="seoSection" class="seo-bar" style="margin-top:16px;" aria-live="polite"></div>
+            <ul class="seo-checks" id="seoChecks"></ul>
+            <label style="font-size:13px;color:var(--text2);display:block;margin-top:20px;margin-bottom:8px;font-weight:600;">Content Preview</label>
+            <div class="preview-box" id="genResPreview"></div>
+            <div class="btn-group">
+              <button class="btn btn-success" onclick="publishGenerated(false)" aria-label="Publish Now">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                Publish Now
+              </button>
+              <button class="btn btn-outline" onclick="publishGenerated(true)" aria-label="Save as Draft">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                Save as Draft
+              </button>
+              <button class="btn btn-outline" onclick="sendToSchedule()" aria-label="Schedule post">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Schedule
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════ Bulk Post Page ═══════════════════ -->
+      <div class="page" id="page-bulk">
+        <div class="page-header">
+          <h2 class="page-title">
+            <div class="page-title-icon orange">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+            </div>
+            Bulk Post
+          </h2>
+          <p class="page-desc">Auto-generate and post multiple articles</p>
+        </div>
+
+        <div class="tab-bar" role="tablist">
+          <div class="tab-item active" onclick="switchBulkTab('schedule')" role="tab" tabindex="0" aria-selected="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;display:inline;vertical-align:-2px;margin-right:6px;" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Schedule Bulk
+          </div>
+          <div class="tab-item" onclick="switchBulkTab('multiblog')" role="tab" tabindex="0" aria-selected="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;display:inline;vertical-align:-2px;margin-right:6px;" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            Multi-Blog
+          </div>
+        </div>
+
+        <!-- Tab 1: Schedule Bulk -->
+        <div class="tab-content active" id="tab-schedule" role="tabpanel">
+          <div class="card">
+            <div class="card-title">
+              <div class="card-icon orange">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+              Generate Multiple Articles + Auto Schedule
+            </div>
+            <div class="card-subtitle">Generate multiple unique articles from one topic with scheduled publishing intervals</div>
+
+            <div class="form-group">
+              <label for="bulkBlogSelect">Blog</label>
+              <select id="bulkBlogSelect" class="blog-select" aria-label="Select blog for bulk posting"></select>
+            </div>
+            <div class="form-group">
+              <label for="bulkTopic">Topic / Keyword</label>
+              <input type="text" id="bulkTopic" name="bulkTopic" placeholder="e.g. AI Tutorial" autocomplete="off">
+            </div>
+            <div class="form-group">
+              <label for="bulkMoneyUrl">Money Site URL (optional)</label>
+              <input type="url" id="bulkMoneyUrl" name="bulkMoneyUrl" placeholder="https://yoursite.com" autocomplete="off">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="bulkCount">Number of Articles</label>
+                <input type="number" id="bulkCount" name="bulkCount" value="5" min="2" max="50">
+              </div>
+              <div class="form-group">
+                <label for="bulkWords">Word Count</label>
+                <input type="number" id="bulkWords" name="bulkWords" value="600" min="300" max="5000">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="bulkInterval">Post Interval</label>
+                <input type="number" id="bulkInterval" name="bulkInterval" value="6" min="1">
+              </div>
+              <div class="form-group">
+                <label for="bulkIntervalUnit">Time Unit</label>
+                <select id="bulkIntervalUnit" aria-label="Interval time unit">
+                  <option value="hours">Hours</option>
+                  <option value="days">Days</option>
+                  <option value="minutes">Minutes</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="bulkStartDate">Start Date</label>
+                <input type="datetime-local" id="bulkStartDate" name="bulkStartDate">
+              </div>
+              <div class="form-group">
+                <label for="bulkLang">Language</label>
+                <select id="bulkLang" aria-label="Select language for bulk">
+                  <option value="th">Thai</option>
+                  <option value="en">English</option>
+                </select>
+              </div>
+            </div>
+            <div class="btn-group">
+              <button class="btn btn-primary" onclick="handleBulkSchedule()" id="bulkScheduleBtn" aria-label="Start Bulk Generate and Schedule">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                Start Bulk Generate &amp; Schedule
+              </button>
+            </div>
+          </div>
+          <div class="card" id="bulkScheduleLog" style="display:none;">
+            <div class="card-title">
+              <div class="card-icon green">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              </div>
+              Progress
+            </div>
+            <div class="bulk-log" id="bulkScheduleLogBody" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Multi-Blog -->
+        <div class="tab-content" id="tab-multiblog" role="tabpanel">
+          <div class="card">
+            <div class="card-title">
+              <div class="card-icon pink">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              </div>
+              Post to Multiple Blogs
+            </div>
+            <div class="card-subtitle">Generate unique articles from one topic and post to each selected blog (1 unique article per blog)</div>
+
+            <div class="form-group">
+              <label for="multiBlogTopic">Topic / Keyword</label>
+              <input type="text" id="multiBlogTopic" name="multiBlogTopic" placeholder="e.g. AI Tutorial" autocomplete="off">
+            </div>
+            <div class="form-group">
+              <label for="multiBlogMoneyUrl">Money Site URL (optional)</label>
+              <input type="url" id="multiBlogMoneyUrl" name="multiBlogMoneyUrl" placeholder="https://yoursite.com" autocomplete="off">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="multiBlogWords">Word Count</label>
+                <input type="number" id="multiBlogWords" name="multiBlogWords" value="600" min="300" max="5000">
+              </div>
+              <div class="form-group">
+                <label for="multiBlogLang">Language</label>
+                <select id="multiBlogLang" aria-label="Select language for multi-blog">
+                  <option value="th">Thai</option>
+                  <option value="en">English</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Select Blogs to Post</label>
+              <div class="blog-checkbox-list" id="multiBlogList" aria-live="polite">
+                <div style="color:var(--text3);padding:12px;">Loading blogs...</div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+                <input type="checkbox" id="multiBlogDraft" style="width:auto;accent-color:var(--primary);">
+                Save as Draft (don't publish immediately)
+              </label>
+            </div>
+            <div class="btn-group">
+              <button class="btn btn-primary" onclick="handleMultiBlog()" id="multiBlogBtn" aria-label="Start Multi-Blog Post">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                Start Multi-Blog Post
+              </button>
+            </div>
+          </div>
+          <div class="card" id="multiBlogLog" style="display:none;">
+            <div class="card-title">
+              <div class="card-icon green">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              </div>
+              Progress
+            </div>
+            <div class="bulk-log" id="multiBlogLogBody" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════ Post Page ═══════════════════ -->
+      <div class="page" id="page-post">
+        <div class="page-header">
+          <h2 class="page-title">
+            <div class="page-title-icon pink">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            </div>
+            Create / Schedule Post
+          </h2>
+          <p class="page-desc">Write your own content or paste prepared text, then publish or schedule</p>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <div class="card-icon pink">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            </div>
+            Post Editor
+          </div>
+          <div class="form-group">
+            <label for="postBlogSelect">Blog</label>
+            <select id="postBlogSelect" class="blog-select" aria-label="Select blog for posting"></select>
+          </div>
+          <div class="form-group">
+            <label for="postTitle">Title</label>
+            <input type="text" id="postTitle" name="postTitle" placeholder="Blog post title..." autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label for="postContent">Content (Markdown)</label>
+            <textarea id="postContent" name="postContent" rows="12" placeholder="Write your content in Markdown..."></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="postDesc">Meta Description</label>
+              <input type="text" id="postDesc" name="postDesc" placeholder="SEO description (150-160 chars)" autocomplete="off">
+            </div>
+            <div class="form-group">
+              <label for="postKeywords">Keywords (comma separated)</label>
+              <input type="text" id="postKeywords" name="postKeywords" placeholder="keyword1, keyword2" autocomplete="off">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="postLabels">Labels (comma separated)</label>
+              <input type="text" id="postLabels" name="postLabels" placeholder="label1, label2" autocomplete="off">
+            </div>
+            <div class="form-group">
+              <label for="postDate">Schedule Date (optional)</label>
+              <input type="datetime-local" id="postDate" name="postDate">
+            </div>
+          </div>
+          <div class="form-group">
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+              <input type="checkbox" id="postSkipImages" style="width:auto;accent-color:var(--primary);">
+              Skip image search
+            </label>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-success" onclick="handlePost(false)" aria-label="Publish Now">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+              Publish Now
+            </button>
+            <button class="btn btn-outline" onclick="handlePost(true)" aria-label="Save as Draft">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+              Save as Draft
+            </button>
+            <button class="btn btn-primary" onclick="handleSchedule()" aria-label="Schedule Post">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Schedule Post
+            </button>
+            <button class="btn btn-outline btn-sm" onclick="checkSeoManual()" aria-label="Check SEO Score">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+              Check SEO
+            </button>
+          </div>
+        </div>
+        <div id="manualSeoResult" style="display:none;" class="card">
+          <div class="card-title">
+            <div class="card-icon green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            </div>
+            SEO Analysis
+          </div>
+          <div id="manualSeoBar" class="seo-bar" aria-live="polite"></div>
+          <ul class="seo-checks" id="manualSeoChecks"></ul>
+        </div>
+      </div>
+
+      <!-- ═══════════════════ Posts Page ═══════════════════ -->
+      <div class="page" id="page-posts">
+        <div class="page-header">
+          <h2 class="page-title">
+            <div class="page-title-icon purple">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+            </div>
+            Published Posts
+          </h2>
+          <p class="page-desc">Your published articles</p>
+        </div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+            <div class="card-title" style="margin-bottom:0;">
+              <div class="card-icon purple">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2"/></svg>
+              </div>
+              Recent Posts
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="loadPosts()" aria-label="Refresh posts list">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+              Refresh
+            </button>
+          </div>
+          <div id="postsList" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════ Drafts Page ═══════════════════ -->
+      <div class="page" id="page-drafts">
+        <div class="page-header">
+          <h2 class="page-title">
+            <div class="page-title-icon orange">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+            </div>
+            Drafts
+          </h2>
+          <p class="page-desc">Unpublished draft articles</p>
+        </div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+            <div class="card-title" style="margin-bottom:0;">
+              <div class="card-icon orange">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+              </div>
+              Draft Posts
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="loadDrafts()" aria-label="Refresh drafts list">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+              Refresh
+            </button>
+          </div>
+          <div id="draftsList" aria-live="polite"></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay" role="dialog" aria-label="Loading">
+    <div class="loading-box">
+      <div class="spinner"></div>
+      <div id="loadingText">Processing...</div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <script>
+    let generatedData = null;
+
+    // ─── Keyboard nav for nav items ───
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); item.click(); }
+      });
+    });
+
+    document.getElementById('authBadge').addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('settings'); }
+    });
+
+    // ─── Navigation ───
+    function navigate(page) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById('page-' + page).classList.add('active');
+      document.querySelector(`[data-page="${page}"]`).classList.add('active');
+      if (page === 'settings') loadSettingsUI();
+      if (page === 'bulk') loadMultiBlogList();
+      if (page === 'posts') loadPosts();
+      if (page === 'drafts') loadDrafts();
+    }
+
+    function toast(msg, type = 'info') {
+      const icons = {
+        success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;flex-shrink:0;"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
+        error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;flex-shrink:0;"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>',
+        info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;flex-shrink:0;"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
+      };
+      const el = document.createElement('div');
+      el.className = `toast ${type}`;
+      el.innerHTML = `${icons[type] || icons.info}<span>${esc(msg)}</span>`;
+      document.getElementById('toastContainer').appendChild(el);
+      setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateX(20px)'; el.style.transition = 'opacity 0.3s, transform 0.3s'; setTimeout(() => el.remove(), 300); }, 4000);
+    }
+
+    function showLoading(text = 'Processing...') {
+      document.getElementById('loadingText').textContent = text;
+      document.getElementById('loadingOverlay').classList.add('show');
+    }
+    function hideLoading() { document.getElementById('loadingOverlay').classList.remove('show'); }
+
+    async function api(url, opts = {}) {
+      const res = await fetch(url, {
+        headers: { 'Content-Type': 'application/json' },
+        ...opts,
+        body: opts.body ? JSON.stringify(opts.body) : undefined,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Request failed');
+      return data;
+    }
+
+    // ─── Auth ───
+    async function checkAuth() {
+      try {
+        const { authenticated, configured } = await api('/api/auth/status');
+        const dot = document.getElementById('authDot');
+        const text = document.getElementById('authText');
+        const cDot = document.getElementById('connectDot');
+        const cText = document.getElementById('connectText');
+        const cBtn = document.getElementById('connectBtn');
+
+        if (authenticated) {
+          dot.classList.add('ok');
+          text.textContent = 'Connected';
+          cDot.classList.add('on'); cDot.classList.remove('off');
+          cText.textContent = 'Connected to Google';
+          cBtn.textContent = 'Disconnect';
+          cBtn.className = 'btn btn-danger';
+          cBtn.onclick = handleDisconnect;
+          loadBlogs();
+        } else {
+          dot.classList.remove('ok');
+          text.textContent = configured ? 'Not connected' : 'Setup needed';
+          cDot.classList.remove('on'); cDot.classList.add('off');
+          cText.textContent = 'Not Connected';
+          cBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg> Connect Google';
+          cBtn.className = 'btn btn-google';
+          cBtn.onclick = handleConnect;
+          document.querySelectorAll('.blog-select').forEach(s => s.innerHTML = '<option value="">Connect Google first</option>');
+
+          if (!configured && !document.getElementById('page-settings').classList.contains('active')) {
+            navigate('settings');
+          }
+        }
+      } catch {
+        document.getElementById('authText').textContent = 'Error';
+      }
+    }
+
+    // ─── Load Blogs into dropdowns ───
+    let blogsCache = [];
+
+    async function loadBlogs() {
+      try {
+        const { blogs } = await api('/api/blogs');
+        const s = await api('/api/settings');
+        blogsCache = blogs;
+        const currentBlogId = s.blogId;
+
+        document.querySelectorAll('.blog-select').forEach(sel => {
+          sel.innerHTML = blogs.length
+            ? blogs.map(b => `<option value="${b.id}" ${b.id === currentBlogId ? 'selected' : ''}>${esc(b.name)} (${b.posts} posts)</option>`).join('')
+            : '<option value="">No blogs found</option>';
+        });
+
+        document.querySelectorAll('.blog-select').forEach(sel => {
+          sel.onchange = () => {
+            const val = sel.value;
+            document.querySelectorAll('.blog-select').forEach(s2 => s2.value = val);
+            const blog = blogsCache.find(b => b.id === val);
+            if (blog) {
+              api('/api/blogs/select', { method: 'POST', body: { blogId: blog.id, blogName: blog.name } });
+            }
+          };
+        });
+      } catch (e) {
+        document.querySelectorAll('.blog-select').forEach(sel => {
+          sel.innerHTML = `<option value="">Error: ${esc(e.message)}</option>`;
+        });
+      }
+    }
+
+    function getSelectedBlogId() {
+      const sel = document.querySelector('.blog-select');
+      return sel ? sel.value : '';
+    }
+
+    // ─── Settings ───
+    async function loadSettingsUI() {
+      try {
+        const s = await api('/api/settings');
+        document.getElementById('setClientId').value = s.googleClientId || '';
+        document.getElementById('setClientSecret').value = '';
+        document.getElementById('setClientSecret').placeholder = s.googleClientSecretSet ? '(saved - leave blank to keep)' : 'GOCSPX-xxxxxxx';
+        document.getElementById('secretStatus').textContent = s.googleClientSecretSet ? '\u2713' : '';
+        document.getElementById('setGeminiKey').value = '';
+        document.getElementById('setGeminiKey').placeholder = s.geminiApiKeySet ? '(saved - leave blank to keep)' : 'AIzaSy...';
+        document.getElementById('geminiStatus').textContent = s.geminiApiKeySet ? '\u2713' : '';
+        document.getElementById('setUnsplash').value = '';
+        document.getElementById('setUnsplash').placeholder = s.unsplashAccessKeySet ? '(saved)' : 'Unsplash access key';
+        document.getElementById('setPexels').value = '';
+        document.getElementById('setPexels').placeholder = s.pexelsApiKeySet ? '(saved)' : 'Pexels API key';
+      } catch (e) {
+        toast('Failed to load settings: ' + e.message, 'error');
+      }
+    }
+
+    async function handleSaveSettings() {
+      const body = {};
+      const v = (id) => document.getElementById(id).value.trim();
+
+      body.googleClientId = v('setClientId');
+      if (v('setClientSecret')) body.googleClientSecret = v('setClientSecret');
+      if (v('setGeminiKey')) body.geminiApiKey = v('setGeminiKey');
+      if (v('setUnsplash')) body.unsplashAccessKey = v('setUnsplash');
+      if (v('setPexels')) body.pexelsApiKey = v('setPexels');
+
+      try {
+        await api('/api/settings', { method: 'POST', body });
+        toast('Settings saved!', 'success');
+        if (v('setClientSecret')) {
+          document.getElementById('setClientSecret').value = '';
+          document.getElementById('setClientSecret').placeholder = '(saved - leave blank to keep)';
+          document.getElementById('secretStatus').textContent = '\u2713';
+        }
+        if (v('setGeminiKey')) {
+          document.getElementById('setGeminiKey').value = '';
+          document.getElementById('setGeminiKey').placeholder = '(saved - leave blank to keep)';
+          document.getElementById('geminiStatus').textContent = '\u2713';
+        }
+        if (v('setUnsplash')) { document.getElementById('setUnsplash').value = ''; document.getElementById('setUnsplash').placeholder = '(saved)'; }
+        if (v('setPexels')) { document.getElementById('setPexels').value = ''; document.getElementById('setPexels').placeholder = '(saved)'; }
+        checkAuth();
+      } catch (e) {
+        toast(e.message, 'error');
+      }
+    }
+
+    // ─── Connect / Disconnect Google ───
+    async function handleConnect() {
+      try {
+        await handleSaveSettings();
+        const { url } = await api('/api/auth/connect');
+        const popup = window.open(url, 'google-auth', 'width=600,height=700');
+        window.addEventListener('message', function onMsg(e) {
+          if (e.data === 'oauth-success') {
+            window.removeEventListener('message', onMsg);
+            toast('Google account connected!', 'success');
+            checkAuth();
+          }
+        });
+        const poll = setInterval(async () => {
+          const { authenticated } = await api('/api/auth/status');
+          if (authenticated) {
+            clearInterval(poll);
+            toast('Google account connected!', 'success');
+            checkAuth();
+          }
+        }, 3000);
+        setTimeout(() => clearInterval(poll), 180000);
+      } catch (e) {
+        toast(e.message, 'error');
+        if (e.message.includes('Settings')) navigate('settings');
+      }
+    }
+
+    async function handleDisconnect() {
+      if (!confirm('Disconnect Google account?')) return;
+      try {
+        await api('/api/auth/disconnect', { method: 'POST' });
+        toast('Disconnected', 'info');
+        checkAuth();
+      } catch (e) {
+        toast(e.message, 'error');
+      }
+    }
+
+    // ─── Generate ───
+    async function handleGenerate() {
+      const topic = document.getElementById('genTopic').value.trim();
+      if (!topic) return toast('Please enter a topic', 'error');
+      showLoading('AI is generating content\u2026 This may take 15-30 seconds');
+      try {
+        const moneyUrl = document.getElementById('genMoneyUrl').value.trim();
+        const data = await api('/api/generate', {
+          method: 'POST',
+          body: { topic, language: document.getElementById('genLang').value, wordCount: parseInt(document.getElementById('genWords').value), moneyUrl },
+        });
+        generatedData = data;
+        document.getElementById('genResTitle').value = data.title;
+        document.getElementById('genResDesc').value = data.metaDescription;
+        document.getElementById('genResKeywords').value = data.keywords.join(', ');
+        document.getElementById('genResLabels').value = data.labels.join(', ');
+        document.getElementById('genResPreview').innerHTML = simpleMarkdown(data.content);
+        renderSeo(data.seo, 'seoSection', 'seoChecks');
+        document.getElementById('genResult').style.display = 'block';
+        toast('Content generated!', 'success');
+      } catch (e) { toast('Generation failed: ' + e.message, 'error'); }
+      hideLoading();
+    }
+
+    async function publishGenerated(isDraft) {
+      if (!generatedData) return;
+      showLoading(isDraft ? 'Saving draft\u2026' : 'Publishing\u2026');
+      try {
+        const data = await api('/api/post', {
+          method: 'POST',
+          body: { title: generatedData.title, content: generatedData.content, labels: generatedData.labels, metaDescription: generatedData.metaDescription, keywords: generatedData.keywords, isDraft },
+        });
+        toast(`${isDraft ? 'Draft saved' : 'Published'}: ${data.post.title}`, 'success');
+        if (data.post.url) toast('URL: ' + data.post.url, 'info');
+      } catch (e) { toast(e.message, 'error'); }
+      hideLoading();
+    }
+
+    function sendToSchedule() {
+      if (!generatedData) return;
+      document.getElementById('postTitle').value = generatedData.title;
+      document.getElementById('postContent').value = generatedData.content;
+      document.getElementById('postDesc').value = generatedData.metaDescription;
+      document.getElementById('postKeywords').value = generatedData.keywords.join(', ');
+      document.getElementById('postLabels').value = generatedData.labels.join(', ');
+      navigate('post');
+      toast('Content loaded. Set a date and click Schedule.', 'info');
+    }
+
+    // ─── Manual Post ───
+    async function handlePost(isDraft) {
+      const title = document.getElementById('postTitle').value.trim();
+      const content = document.getElementById('postContent').value.trim();
+      if (!title || !content) return toast('Title and content are required', 'error');
+      showLoading(isDraft ? 'Saving draft\u2026' : 'Publishing\u2026');
+      try {
+        const data = await api('/api/post', { method: 'POST', body: {
+          title, content,
+          labels: document.getElementById('postLabels').value.split(',').map(s => s.trim()).filter(Boolean),
+          keywords: document.getElementById('postKeywords').value.split(',').map(s => s.trim()).filter(Boolean),
+          metaDescription: document.getElementById('postDesc').value.trim(),
+          isDraft,
+          skipImages: document.getElementById('postSkipImages').checked,
+        }});
+        toast(`${isDraft ? 'Draft saved' : 'Published'}: ${data.post.title}`, 'success');
+        if (data.post.url) toast('URL: ' + data.post.url, 'info');
+      } catch (e) { toast(e.message, 'error'); }
+      hideLoading();
+    }
+
+    async function handleSchedule() {
+      const title = document.getElementById('postTitle').value.trim();
+      const content = document.getElementById('postContent').value.trim();
+      const dateVal = document.getElementById('postDate').value;
+      if (!title || !content) return toast('Title and content are required', 'error');
+      if (!dateVal) return toast('Please select a schedule date', 'error');
+      showLoading('Scheduling post\u2026');
+      try {
+        const data = await api('/api/schedule', { method: 'POST', body: {
+          title, content, publishDate: new Date(dateVal).toISOString(),
+          labels: document.getElementById('postLabels').value.split(',').map(s => s.trim()).filter(Boolean),
+          keywords: document.getElementById('postKeywords').value.split(',').map(s => s.trim()).filter(Boolean),
+          metaDescription: document.getElementById('postDesc').value.trim(),
+          skipImages: document.getElementById('postSkipImages').checked,
+        }});
+        toast(`Scheduled: ${data.post.title} - ${data.schedule.local}`, 'success');
+      } catch (e) { toast(e.message, 'error'); }
+      hideLoading();
+    }
+
+    async function checkSeoManual() {
+      try {
+        const data = await api('/api/seo/check', { method: 'POST', body: {
+          title: document.getElementById('postTitle').value,
+          content: document.getElementById('postContent').value,
+          metaDescription: document.getElementById('postDesc').value,
+          keywords: document.getElementById('postKeywords').value.split(',').map(s => s.trim()).filter(Boolean),
+        }});
+        renderSeo(data, 'manualSeoBar', 'manualSeoChecks');
+        document.getElementById('manualSeoResult').style.display = 'block';
+      } catch (e) { toast(e.message, 'error'); }
+    }
+
+    function renderSeo(seo, barId, checksId) {
+      const cls = seo.score >= 80 ? 'good' : seo.score >= 50 ? 'ok' : 'bad';
+      const label = seo.score >= 80 ? 'Great!' : seo.score >= 50 ? 'Could be better' : 'Needs improvement';
+      document.getElementById(barId).innerHTML = `<div class="seo-score-circle ${cls}">${seo.score}</div><div><div style="font-weight:700;font-size:15px;">SEO Score</div><div style="font-size:13px;color:var(--text2);margin-top:2px;">${label}</div></div>`;
+      document.getElementById(checksId).innerHTML = seo.checks.map(c => `<li><span class="${c.pass ? 'check-pass' : 'check-fail'}">${c.pass ? '\u2713' : '\u2717'}</span>${esc(c.name)}${c.detail ? ` <span style="color:var(--text3);">(${esc(c.detail)})</span>` : ''}</li>`).join('');
+    }
+
+    // ─── Posts / Drafts ───
+    async function loadPosts() {
+      const el = document.getElementById('postsList');
+      el.innerHTML = '<div style="color:var(--text3);padding:24px 0;text-align:center;">Loading\u2026</div>';
+      try {
+        const { posts } = await api('/api/posts');
+        if (!posts.length) { el.innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg><p>No published posts yet</p></div>'; return; }
+        el.innerHTML = posts.map(p => `<div class="post-item"><div class="post-info"><h3>${esc(p.title)}</h3><div class="post-meta"><span>${new Intl.DateTimeFormat('th-TH', { dateStyle: 'medium' }).format(new Date(p.published))}</span>${p.url ? `<a href="${p.url}" target="_blank" rel="noopener">View &rarr;</a>` : ''}</div>${p.labels?.length ? `<div class="post-labels">${p.labels.map(l => `<span class="label-tag">${esc(l)}</span>`).join('')}</div>` : ''}</div><button class="btn btn-danger btn-sm" onclick="deletePost('${p.id}',this)" aria-label="Delete post ${esc(p.title)}">Delete</button></div>`).join('');
+      } catch (e) { el.innerHTML = `<div class="empty-state"><p>${esc(e.message)}</p></div>`; }
+    }
+
+    async function loadDrafts() {
+      const el = document.getElementById('draftsList');
+      el.innerHTML = '<div style="color:var(--text3);padding:24px 0;text-align:center;">Loading\u2026</div>';
+      try {
+        const { posts } = await api('/api/drafts');
+        if (!posts.length) { el.innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg><p>No drafts</p></div>'; return; }
+        el.innerHTML = posts.map(p => `<div class="post-item"><div class="post-info"><h3>${esc(p.title)}</h3><div class="post-meta"><span>Updated: ${new Intl.DateTimeFormat('th-TH', { dateStyle: 'medium' }).format(new Date(p.updated))}</span><span>ID: ${p.id}</span></div></div><button class="btn btn-danger btn-sm" onclick="deletePost('${p.id}',this)" aria-label="Delete draft ${esc(p.title)}">Delete</button></div>`).join('');
+      } catch (e) { el.innerHTML = `<div class="empty-state"><p>${esc(e.message)}</p></div>`; }
+    }
+
+    async function deletePost(id, btn) {
+      if (!confirm('Delete this post?')) return;
+      btn.disabled = true;
+      try { await api(`/api/posts/${id}`, { method: 'DELETE' }); btn.closest('.post-item').style.opacity = '0'; btn.closest('.post-item').style.transform = 'translateX(-20px)'; btn.closest('.post-item').style.transition = 'opacity 0.3s, transform 0.3s'; setTimeout(() => btn.closest('.post-item')?.remove(), 300); toast('Deleted', 'success'); }
+      catch (e) { toast(e.message, 'error'); btn.disabled = false; }
+    }
+
+    function esc(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+
+    function simpleMarkdown(md) {
+      return md
+        .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+        .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+        .replace(/^# (.+)$/gm, '<h2>$1</h2>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        .replace(/^- (.+)$/gm, '<li>$1</li>')
+        .replace(/^(\d+)\. (.+)$/gm, '<li>$2</li>')
+        .replace(/\n\n/g, '</p><p>')
+        .replace(/^/, '<p>').replace(/$/, '</p>')
+        .replace(/<p><h/g, '<h').replace(/<\/h(\d)><\/p>/g, '</h$1>')
+        .replace(/<p><li>/g, '<ul><li>').replace(/<\/li><\/p>/g, '</li></ul>');
+    }
+
+    // ─── Bulk Tabs ───
+    function switchBulkTab(tab) {
+      document.querySelectorAll('.tab-item').forEach((t, i) => {
+        t.classList.toggle('active', (tab === 'schedule' ? i === 0 : i === 1));
+        t.setAttribute('aria-selected', t.classList.contains('active'));
+      });
+      document.getElementById('tab-schedule').classList.toggle('active', tab === 'schedule');
+      document.getElementById('tab-multiblog').classList.toggle('active', tab === 'multiblog');
+    }
+
+    // Tab keyboard support
+    document.querySelectorAll('.tab-item').forEach(item => {
+      item.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); item.click(); }
+      });
+    });
+
+    // ─── Bulk Schedule ───
+    async function handleBulkSchedule() {
+      const topic = document.getElementById('bulkTopic').value.trim();
+      if (!topic) return toast('Please enter a topic', 'error');
+
+      const count = parseInt(document.getElementById('bulkCount').value);
+      const wordCount = parseInt(document.getElementById('bulkWords').value);
+      const interval = parseInt(document.getElementById('bulkInterval').value);
+      const unit = document.getElementById('bulkIntervalUnit').value;
+      const lang = document.getElementById('bulkLang').value;
+      const moneyUrl = document.getElementById('bulkMoneyUrl').value.trim();
+      const startDateVal = document.getElementById('bulkStartDate').value;
+
+      if (!startDateVal) return toast('Please select a start date', 'error');
+
+      const startDate = new Date(startDateVal);
+      if (startDate <= new Date()) return toast('Start date must be in the future', 'error');
+
+      const btn = document.getElementById('bulkScheduleBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner" style="width:16px;height:16px;border-width:2px;"></span> Processing\u2026';
+
+      const logCard = document.getElementById('bulkScheduleLog');
+      const logBody = document.getElementById('bulkScheduleLogBody');
+      logCard.style.display = 'block';
+      logBody.innerHTML = '';
+
+      function log(msg, cls = '') { logBody.innerHTML += `<div class="${cls}">${msg}</div>`; logBody.scrollTop = logBody.scrollHeight; }
+
+      const intervalMs = interval * (unit === 'days' ? 86400000 : unit === 'hours' ? 3600000 : 60000);
+
+      log(`Starting bulk: ${count} articles about "${topic}"`, 'log-info');
+      log(`Interval: every ${interval} ${unit}, starting ${new Intl.DateTimeFormat('th-TH', { dateStyle: 'medium', timeStyle: 'short' }).format(startDate)}`, 'log-info');
+
+      let success = 0;
+      for (let i = 0; i < count; i++) {
+        const scheduleDate = new Date(startDate.getTime() + i * intervalMs);
+        log(`\n[${i + 1}/${count}] Generating article #${i + 1}\u2026`, 'log-wait');
+
+        try {
+          const data = await api('/api/generate', {
+            method: 'POST',
+            body: { topic, language: lang, wordCount, moneyUrl, variation: i + 1 },
+          });
+          log(`Generated: "${data.title}" (SEO: ${data.seo.score}/100)`, 'log-ok');
+
+          log(`Scheduling for ${new Intl.DateTimeFormat('th-TH', { dateStyle: 'medium', timeStyle: 'short' }).format(scheduleDate)}\u2026`, 'log-wait');
+          const result = await api('/api/schedule', {
+            method: 'POST',
+            body: {
+              title: data.title, content: data.content, labels: data.labels,
+              metaDescription: data.metaDescription, keywords: data.keywords,
+              publishDate: scheduleDate.toISOString(), skipImages: false,
+            },
+          });
+          log(`Scheduled! Post ID: ${result.post.id}`, 'log-ok');
+          success++;
+        } catch (e) {
+          log(`Error: ${e.message}`, 'log-err');
+        }
+      }
+
+      log(`\nDone! ${success}/${count} articles scheduled.`, 'log-info');
+      btn.disabled = false;
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg> Start Bulk Generate & Schedule';
+      toast(`Bulk complete: ${success}/${count} scheduled`, success === count ? 'success' : 'error');
+    }
+
+    // ─── Multi-Blog ───
+    function loadMultiBlogList() {
+      const container = document.getElementById('multiBlogList');
+      if (!blogsCache.length) {
+        container.innerHTML = '<div style="color:var(--text3);padding:12px;">Connect Google first to see your blogs</div>';
+        return;
+      }
+      container.innerHTML = blogsCache.map(b => `
+        <label class="blog-check-item" id="blogcheck-${b.id}" onclick="this.classList.toggle('checked')">
+          <input type="checkbox" value="${b.id}" data-name="${esc(b.name)}" style="width:auto;accent-color:var(--primary);">
+          <div>
+            <div class="blog-check-name">${esc(b.name)}</div>
+            <div class="blog-check-url">${esc(b.url)} &middot; ${b.posts} posts</div>
+          </div>
+        </label>
+      `).join('');
+    }
+
+    async function handleMultiBlog() {
+      const topic = document.getElementById('multiBlogTopic').value.trim();
+      if (!topic) return toast('Please enter a topic', 'error');
+
+      const checkboxes = document.querySelectorAll('#multiBlogList input[type=checkbox]:checked');
+      if (!checkboxes.length) return toast('Please select at least one blog', 'error');
+
+      const selectedBlogs = Array.from(checkboxes).map(cb => ({ id: cb.value, name: cb.dataset.name }));
+      const wordCount = parseInt(document.getElementById('multiBlogWords').value);
+      const lang = document.getElementById('multiBlogLang').value;
+      const moneyUrl = document.getElementById('multiBlogMoneyUrl').value.trim();
+      const isDraft = document.getElementById('multiBlogDraft').checked;
+
+      const btn = document.getElementById('multiBlogBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner" style="width:16px;height:16px;border-width:2px;"></span> Processing\u2026';
+
+      const logCard = document.getElementById('multiBlogLog');
+      const logBody = document.getElementById('multiBlogLogBody');
+      logCard.style.display = 'block';
+      logBody.innerHTML = '';
+
+      function log(msg, cls = '') { logBody.innerHTML += `<div class="${cls}">${msg}</div>`; logBody.scrollTop = logBody.scrollHeight; }
+
+      log(`Multi-blog: "${topic}" \u2192 ${selectedBlogs.length} blogs`, 'log-info');
+
+      let success = 0;
+      for (let i = 0; i < selectedBlogs.length; i++) {
+        const blog = selectedBlogs[i];
+        log(`\n[${i + 1}/${selectedBlogs.length}] Blog: ${blog.name}`, 'log-info');
+
+        try {
+          await api('/api/blogs/select', { method: 'POST', body: { blogId: blog.id, blogName: blog.name } });
+
+          log(`Generating unique article\u2026`, 'log-wait');
+          const data = await api('/api/generate', {
+            method: 'POST',
+            body: { topic, language: lang, wordCount, moneyUrl, variation: i + 1 },
+          });
+          log(`Generated: "${data.title}" (SEO: ${data.seo.score}/100)`, 'log-ok');
+
+          log(`${isDraft ? 'Saving draft' : 'Publishing'}\u2026`, 'log-wait');
+          const result = await api('/api/post', {
+            method: 'POST',
+            body: {
+              title: data.title, content: data.content, labels: data.labels,
+              metaDescription: data.metaDescription, keywords: data.keywords,
+              isDraft, skipImages: false,
+            },
+          });
+          log(`${isDraft ? 'Draft saved' : 'Published'}! Post ID: ${result.post.id}`, 'log-ok');
+          success++;
+        } catch (e) {
+          log(`Error: ${e.message}`, 'log-err');
+        }
+      }
+
+      log(`\nDone! ${success}/${selectedBlogs.length} blogs posted.`, 'log-info');
+      btn.disabled = false;
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg> Start Multi-Blog Post';
+      toast(`Multi-blog complete: ${success}/${selectedBlogs.length}`, success === selectedBlogs.length ? 'success' : 'error');
+    }
+
+    // ─── Init ───
+    checkAuth();
+  </script>
+</body>
+</html>
