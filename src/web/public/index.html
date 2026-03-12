@@ -194,6 +194,33 @@
       border-top: 1px solid var(--border);
     }
 
+    .sidebar-credit {
+      padding: 12px 24px 0;
+      text-align: center;
+    }
+
+    .sidebar-credit a {
+      font-size: 11px;
+      color: var(--text3);
+      text-decoration: none;
+      transition: color 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      line-height: 1.4;
+    }
+
+    .sidebar-credit a:hover { color: var(--primary-light); }
+
+    .sidebar-credit span {
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary-light), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
     .auth-badge {
       display: flex;
       align-items: center;
@@ -983,6 +1010,9 @@
           <div class="auth-dot" id="authDot"></div>
           <span id="authText">Checking...</span>
         </div>
+      </div>
+      <div class="sidebar-credit">
+        <a href="https://aiunlockinnovations.com" target="_blank" rel="noopener">Dev by <span>AI UNLOCKED</span></a>
       </div>
     </nav>
 
