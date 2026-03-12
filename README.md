@@ -232,4 +232,12 @@ MIT
 
 ## ผู้พัฒนา
 
-สร้างด้วย AI โดย [AI Unlocked](https://github.com/aiunlocked1412)
+สร้างโดย **AI Unlocked**
+
+| | ลิงก์ |
+|---|---|
+| เว็บไซต์ | [aiunlockinnovations.com](https://aiunlockinnovations.com) |
+| คอร์สออนไลน์ | [aiunlock.co](https://aiunlock.co) |
+| Facebook | [AI Unlocked VIP](https://www.facebook.com/AIUnlockedVIP) |
+| YouTube | [AIUnlocked168](https://www.youtube.com/@AIUnlocked168) |
+| GitHub | [aiunlocked1412](https://github.com/aiunlocked1412) |
